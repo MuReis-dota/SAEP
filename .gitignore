@@ -1,0 +1,5 @@
+#Dependêndias do node.js
+node_modules/
+
+#Arquivos de ambiente e chaves sensíveis
+.env
