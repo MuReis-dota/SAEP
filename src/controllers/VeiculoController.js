@@ -20,6 +20,34 @@ class VeiculoController {
         }
 
     }
+
+    async criar(req, res) {
+        const {placa, modelo, marca, ano, cliente_id} = req.body;
+
+        if (!placa || !modelo || !marca || !ano || !cliente_id) {
+            return res.status(400).json({
+                error: "Todos os campos são obrigatórios"
+            })
+        }
+
+        try {
+            const [result] = await pool.query(
+                `INSERT INTO veiculos(placa, modelo, marca, ano, cliente_id)
+                    VALUE (?,?,?,?,?)`,
+                [placa, modelo, marca, ano, cliente_id]
+            )
+
+            return res.status(201).json({
+                message:"Veículo cadastrado",
+                id: result.insertId
+            })
+        } catch (error) {
+            console.error('Erro ao cadstrar veículo:', error);
+            return res.status(500).json({
+                error:"Erro ao salvar veículo no banco de dados"
+            })
+        }
+    }
 }
 
 export default new VeiculoController

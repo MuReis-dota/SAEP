@@ -51,6 +51,43 @@ class ClienteController {
                 })
         }
     }
+
+    async atualizar(req, res) {
+        const {id} = req.params;
+        const {nome, cpf, telefone, email} = req.body;
+
+        if (!nome || !cpf || !telefone || !email) {
+            return res.status(400).json({
+                error: "Todos os campos são obrigatórios baby ❤️"
+            });
+        }
+
+        try {
+            const cpfCriptografado = cryptoService.encrypt(cpf);
+            const [result] = await pool.query(
+                `UPDATE
+                    clientes
+                SET nome=?, cpf=?, telefone=?, email=?
+                    WHERE id=?`,
+                [nome, cpfCriptografado, telefone, email, id]
+            );
+
+            if (result.affectedRows === 0) {
+                return res.status(400).json({
+                    error:"Não achei o cliente por incopetencia sua"
+                });
+            }
+
+            return res.json({
+                message: "Dados do cliente atualizado com sucesso!!!!!!! BJS viu"
+            });
+        } catch (error) {
+            console.error("Erro ao atualizar o cliente, pfvr verifique por mim:", error)
+            return res.status(500).json({
+                error:"Erro ao atualizar dados do cliente"
+            });
+        }
+    }
 }
 
 export default new ClienteController
